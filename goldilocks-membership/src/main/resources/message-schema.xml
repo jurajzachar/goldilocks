@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sbe:messageSchema xmlns:sbe="http://www.fixprotocol.org/ns/simple/1.0"
+	package="org.blueskiron.goldilocks.membership.messages.sbe" id="1"
+	version="0" semanticVersion="0.0.1-SNAPSHOT" description="Goldilocks protocol buffer 
+	binary encoding schema"
+	byteOrder="littleEndian">
+	<types>
+		<composite name="messageHeader"
+			description="Message identifiers and length of message root">
+			<type name="blockLength" primitiveType="uint16" />
+			<type name="templateId" primitiveType="uint16" />
+			<type name="schemaId" primitiveType="uint16" />
+			<type name="version" primitiveType="uint16" />
+		</composite>
+		<composite name="varDataEncoding">
+			<type name="length" primitiveType="uint8" />
+			<type name="varData" primitiveType="uint8" length="0"
+				characterEncoding="UTF-8" semanticType="data" />
+		</composite>
+		<composite name="largeVarDataEncoding">
+			<type name="length" primitiveType="uint8" />
+			<type name="varData" primitiveType="uint16" presence="optional"
+				length="0" characterEncoding="UTF-8" semanticType="largeData" />
+		</composite>
+	</types>
+	<types>
+		<enum name="BooleanType" encodingType="uint8">
+			<validValue name="FALSE">0</validValue>
+			<validValue name="TRUE">1</validValue>
+		</enum>
+	</types>
+
+	<!-- Votes -->
+	<sbe:message name="VoteRequest" id="1"
+		description="RaftMessage for VoteRequest">
+		<field name="term" id="1" type="uint16" />
+		<field name="commitIndex" id="2" type="uint64" />
+		<data name="compositeId" id="3" type="varDataEncoding" />
+	</sbe:message>
+	<sbe:message name="VoteResponse" id="2"
+		description="RaftMessage for VoteResponse">
+		<field name="term" id="1" type="uint16" />
+		<field name="commitIndex" id="2" type="uint64" />
+		<field name="isGranted" id="3" type="BooleanType" />
+		<data name="compositeId" id="4" type="varDataEncoding" />
+		<data name="originatorId" id="5" type="varDataEncoding" />
+	</sbe:message>
+
+	<!-- AppendEntries -->
+	<sbe:message name="AppendEntriesRequest" id="3"
+		description="RaftMessage for AppendEntriesRequest">
+		<field name="term" id="1" type="uint16" />
+		<field name="commitIndex" id="2" type="uint64" />
+		<field name="isLeaseRequest" id="3" type="BooleanType" />
+		<data name="compositeId" id="4" type="varDataEncoding" />
+		<data name="optionalEntries" id="5" type="largeVarDataEncoding" />
+	</sbe:message>
+	<sbe:message name="AppendEntriesResponse" id="4"
+		description="RaftMessage for VoteResponse">
+		<field name="term" id="1" type="uint16" />
+		<field name="commitIndex" id="2" type="uint64" />
+		<field name="isLeaseResponse" id="3" type="BooleanType" />
+		<data name="compositeId" id="4" type="varDataEncoding" />
+		<data name="originatorId" id="5" type="varDataEncoding" />
+	</sbe:message>
+
+	<!-- Membership (non-Raft) -->
+	<sbe:message name="Join" id="5"
+		description="Membership message for Joining cluster">
+		<data name="stateMachineId" id="1" type="varDataEncoding" />
+		<data name="stateMachineClassName" id="2" type="varDataEncoding" />
+		<data name="serializedStateMachine" id="3" type="varDataEncoding" />
+		<data name="memberIds" id="4" type="largeVarDataEncoding" />
+		<data name="acknowledgements" id="5" type="largeVarDataEncoding" />
+	</sbe:message>
+	<sbe:message name="Rejoin" id="6"
+		description="Membership message for Rejoining cluster">
+		<data name="stateMachineId" id="1" type="varDataEncoding" />
+		<data name="memberId" id="2" type="varDataEncoding" />
+		<data name="acknowledgements" id="3" type="largeVarDataEncoding" />
+	</sbe:message>
+	<sbe:message name="Leave" id="7"
+		description="Membership message for Leaving cluster">
+		<data name="stateMachineId" id="1" type="varDataEncoding" />
+		<data name="originatorId" id="2" type="varDataEncoding" />
+		<data name="acknowledgements" id="3" type="largeVarDataEncoding" />
+	</sbe:message>
+</sbe:messageSchema>
