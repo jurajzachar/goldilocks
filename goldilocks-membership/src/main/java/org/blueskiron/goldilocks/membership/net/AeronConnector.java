@@ -78,8 +78,8 @@ public class AeronConnector implements Connector {
           .receiverIdleStrategy(new NoOpIdleStrategy())
           .senderIdleStrategy(new NoOpIdleStrategy());
       driverCtx.dirsDeleteOnStart(true);
-      //tmp partition is too small on my computer. Each Aeron instance consumes roughly 500MB!
-      String embeddedDirName = "/virt/aeron/aeron_" + configuration.withLocalBinding();
+      //tmp partition may be too small on a single host. Each Aeron instance consumes roughly 500MB!
+      String embeddedDirName = "/tmp/aeron_" + configuration.withLocalBinding();
       driverCtx.dirName(embeddedDirName);
       LOG.info("Launching Media Driver at {}", configuration.withLocalBinding());
       try {

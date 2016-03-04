@@ -21,7 +21,6 @@ import org.blueskiron.goldilocks.api.statemachine.StateMachine;
 import org.blueskiron.goldilocks.api.states.Follower;
 import org.blueskiron.goldilocks.api.states.Leader;
 import org.blueskiron.goldilocks.api.states.State;
-import org.blueskiron.goldilocks.log.replication.InMemoryLog;
 import org.blueskiron.goldilocks.membership.messages.AppendEntriesResponseImpl;
 import org.blueskiron.goldilocks.membership.messages.Join;
 import org.blueskiron.goldilocks.membership.messages.VoteResponseImpl;
@@ -37,7 +36,7 @@ final class Rafter implements Raft {
 
   private static final Logger LOG = LoggerFactory.getLogger(Rafter.class);
   // TODO configure me
-  private final InMemoryLog memlog = new InMemoryLog(1024);
+  //private final InMemoryLog memlog = new InMemoryLog(1024);
   private final AtomicReference<State> state = new AtomicReference<State>();
   private final AtomicInteger committedTerm = new AtomicInteger();
   private final AtomicLong committedLogIndex = new AtomicLong();
@@ -272,10 +271,6 @@ final class Rafter implements Raft {
 
   long committedLogIndex() {
     return committedLogIndex.get();
-  }
-
-  int previousLogTerm() {
-    return memlog.getLatestTerm();
   }
 
   void broadcastHeartbeat(AppendEntriesRequest request) {
